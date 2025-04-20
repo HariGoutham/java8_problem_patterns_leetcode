@@ -1,0 +1,170 @@
+// Duplicates
+
+1.
+List<Integer> distinctNumbers = numbers.stream()
+    .filter(n -> Collections.frequency(numbers, n) > 1) // Finds duplicates
+    .distinct()
+    .collect(Collectors.toList());
+-----------------------------------------------------------------------------------------------------
+2.
+List<Integer> distinctNumbers = numbers.stream()
+    .collect(Collectors.groupingBy(n -> n, Collectors.counting())) // Count occurrences
+    .entrySet().stream()
+    .filter(entry -> entry.getValue() == 1) // Keep only those appearing once
+    .map(Map.Entry::getKey) // Extract the key (number)
+    .collect(Collectors.toList());
+-----------------------------------------------------------------------------------------------------
+3.
+Set<Integer> seen = new HashSet<>();
+Set<Integer> duplicates = numbers.stream()
+    .filter(n -> !seen.add(n)) // If add() returns false, it's a duplicate
+    .collect(Collectors.toSet());
+
+System.out.println(duplicates);
+-----------------------------------------------------------------------------------------------------
+
+📌 1. Find Common Elements in Two Lists
+💡 Problem: Given two lists, find the common elements.
+
+List<Integer> list1 = Arrays.asList(1, 2, 3, 4, 5);
+List<Integer> list2 = Arrays.asList(3, 4, 5, 6, 7);
+
+List<Integer> commonElements = list1.stream()
+    .filter(list2::contains)
+    .collect(Collectors.toList());
+
+System.out.println(commonElements); // Output: [3, 4, 5]
+-----------------------------------------------------------------------------------------------------
+✅ Why use Streams?
+
+Simple one-liner using filter().
+
+Works well when list2 is small (for large lists, use Set for better performance).
+-----------------------------------------------------------------------------------------------------
+📌 2. Find Common Elements in Multiple Lists
+💡 Problem: Find elements that are common across multiple lists.
+List<List<Integer>> listOfLists = Arrays.asList(
+    Arrays.asList(1, 2, 3, 4, 5),
+    Arrays.asList(3, 4, 5, 6, 7),
+    Arrays.asList(4, 5, 6, 7, 8)
+);
+
+Set<Integer> commonElements = listOfLists.stream()
+    .map(HashSet::new)  // Convert each list to a Set
+    .reduce((set1, set2) -> {
+        set1.retainAll(set2);
+        return set1;
+    })
+    .orElse(Collections.emptySet());
+
+System.out.println(commonElements); // Output: [4, 5]
+✅ Why use retainAll()?
+
+Efficiently finds common elements across multiple lists.
+
+Uses Set operations to speed up lookups.
+-----------------------------------------------------------------------------------------------------
+📌 3. Find First Non-Repeating Character in a String
+💡 Problem: Given a string, find the first non-repeating character.
+String input = "swiss";
+
+Character firstNonRepeating = input.chars()
+    .mapToObj(c -> (char) c)
+    .filter(c -> input.indexOf(c) == input.lastIndexOf(c))
+    .findFirst()
+    .orElse(null);
+
+System.out.println(firstNonRepeating); // Output: 'w'
+✅ Why use indexOf() & lastIndexOf()?
+
+Ensures the character appears only once in the string.
+-----------------------------------------------------------------------------------------------------
+📌 4. Find Duplicate Elements in a List
+💡 Problem: Find all duplicate elements from a list.
+List<Integer> numbers = Arrays.asList(1, 2, 3, 4, 2, 5, 6, 3, 7, 8, 1);
+
+Set<Integer> unique = new HashSet<>();
+Set<Integer> duplicates = numbers.stream()
+    .filter(n -> !unique.add(n)) // add() returns false if element is already present
+    .collect(Collectors.toSet());
+
+System.out.println(duplicates); // Output: [1, 2, 3]
+✅ Why use Set.add()?
+
+HashSet maintains uniqueness, so duplicates are easily identified.
+-----------------------------------------------------------------------------------------------------
+📌 5. Find Missing Numbers in a Sequence
+💡 Problem: Given a list of numbers from 1 to N with missing numbers, find them.
+List<Integer> givenNumbers = Arrays.asList(1, 2, 4, 6, 7, 9, 10);
+int N = 10;
+
+List<Integer> missingNumbers = IntStream.rangeClosed(1, N)
+    .filter(n -> !givenNumbers.contains(n))
+    .boxed()
+    .collect(Collectors.toList());
+
+System.out.println(missingNumbers); // Output: [3, 5, 8]
+✅ Why use IntStream.rangeClosed(1, N)?
+
+Efficiently generates numbers 1 to N without looping.
+-----------------------------------------------------------------------------------------------------
+📌 6. Find Common Elements in Two Maps (Matching Keys)
+💡 Problem: Given two maps, find common keys.
+Map<String, Integer> map1 = Map.of("Alice", 30, "Bob", 25, "Charlie", 35);
+Map<String, Integer> map2 = Map.of("Bob", 28, "Charlie", 35, "Eve", 40);
+
+Set<String> commonKeys = map1.keySet().stream()
+    .filter(map2::containsKey)
+    .collect(Collectors.toSet());
+
+System.out.println(commonKeys); // Output: [Bob, Charlie]
+✅ Why use keySet()?
+
+Efficiently finds common keys between two maps.
+-----------------------------------------------------------------------------------------------------
+📌 7. Find Most Frequent Element in a List
+💡 Problem: Given a list, find the most frequently occurring element.
+List<String> words = Arrays.asList("apple", "banana", "apple", "orange", "banana", "apple");
+
+String mostFrequent = words.stream()
+    .collect(Collectors.groupingBy(w -> w, Collectors.counting()))
+    .entrySet().stream()
+    .max(Map.Entry.comparingByValue())
+    .map(Map.Entry::getKey)
+    .orElse(null);
+
+System.out.println(mostFrequent); // Output: "apple"
+✅ Why use groupingBy()?
+
+Counts occurrences of each word and finds the most frequent one.
+-----------------------------------------------------------------------------------------------------
+📌 8. Find All Anagrams in a List
+💡 Problem: Given a list of words, find groups of anagrams.
+List<String> words = Arrays.asList("listen", "silent", "enlist", "rat", "tar", "art", "evil", "vile", "veil");
+
+Map<String, List<String>> anagramGroups = words.stream()
+    .collect(Collectors.groupingBy(word -> {
+        char[] chars = word.toCharArray();
+        Arrays.sort(chars);
+        return new String(chars);
+    }));
+
+System.out.println(anagramGroups);
+// Output: {art=[rat, tar, art], eilv=[evil, vile, veil], eilnst=[listen, silent, enlist]}
+✅ Why use Arrays.sort()?
+
+Sorting characters helps group anagrams together.
+-----------------------------------------------------------------------------------------------------
+📌 9. Find Maximum Difference in an Array
+💡 Problem: Find the largest difference between two numbers in a list.
+List<Integer> numbers = Arrays.asList(10, 3, 6, 8, 15, 2);
+
+int min = numbers.stream().min(Integer::compare).orElse(0);
+int max = numbers.stream().max(Integer::compare).orElse(0);
+int maxDifference = max - min;
+
+System.out.println(maxDifference); // Output: 13 (15 - 2)
+✅ Why use min() and max()?
+
+Finds the largest gap in a list efficiently.
+
