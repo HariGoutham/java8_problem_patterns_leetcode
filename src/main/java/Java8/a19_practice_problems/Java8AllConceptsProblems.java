@@ -1,38 +1,61 @@
 package Java8.a19_practice_problems;
 
 import java.time.LocalDate;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public class Java8AllConceptsProblems {
+
+    public static void main(String[] args) {
+        problem1(Arrays.asList(2, 4, 4, 5, 6, 8, 8, 9));
+        problem2(List.of(List.of("Apple", "Banana"), List.of("Carrot", "Dates"), List.of("Eggplant", "Fig")));
+        problem3(List.of("apple", "banana", "apple", "orange", "banana", "apple"));
+        problem4(List.of(10, 45, 32, 67, 23, 99, 87));
+        List<Employee> employees = List.of(
+                new Employee(1, "Alice", "IT", "Developer", 90000, 2019, 30),
+                new Employee(2, "Bob", "IT", "Lead", 120000, 2017, 35),
+                new Employee(3, "Charlie", "HR", "Manager", 110000, 2018, 33),
+                new Employee(4, "Daisy", "Finance", "Analyst", 90000, 2020, 28)
+        );
+        problem5(employees);
+    }
 
     // 1. Get list of squares of distinct even numbers
     public static void problem1(List<Integer> numbers) {
         // starter code
+        var distinctEven = numbers.stream().filter(a -> a%2 ==0).distinct().collect(Collectors.toList());
+        System.out.println(distinctEven);
     }
 
     // 2. Flatten a list of list of strings and return unique elements
     public static void problem2(List<List<String>> nestedList) {
         // starter code
-
+        var v  = nestedList.stream().flatMap(a -> a.stream()).distinct().collect(Collectors.toList());
+        System.out.println(v);
     }
 
     // 3. Count frequency of words in a list
     public static void problem3(List<String> words) {
-
-
-        // starter code
+        var t = words.stream().collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
+        System.out.println(t);
     }
 
     // 4. Find the top 3 highest numbers
     public static void problem4(List<Integer> numbers) {
         // starter code
+        System.out.println(numbers.stream().sorted(Comparator.reverseOrder()).limit(3).collect(Collectors.toList()));
     }
 
     // 5. Find second highest salary from list of employees
     public static void problem5(List<Employee> employees) {
         // starter code
+
+        var secondHighestSalary = employees.stream().sorted(Comparator.comparing(Employee::getSalary).reversed())
+                .skip(1).findFirst().get();
+
+        System.out.println(secondHighestSalary.salary);
+
     }
 
     // 6. Filter out null and empty strings and sort by length
@@ -268,7 +291,72 @@ public class Java8AllConceptsProblems {
         double salary;
         int joiningYear;
         int age;
-        // constructor, getters, setters
+
+        public Employee(int id, String name, String department, String designation, double salary, int joiningYear, int age) {
+            this.id = id;
+            this.name = name;
+            this.department = department;
+            this.designation = designation;
+            this.salary = salary;
+            this.joiningYear = joiningYear;
+            this.age = age;
+        }
+
+        public int getId() {
+            return id;
+        }
+
+        public void setId(int id) {
+            this.id = id;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public String getDepartment() {
+            return department;
+        }
+
+        public void setDepartment(String department) {
+            this.department = department;
+        }
+
+        public String getDesignation() {
+            return designation;
+        }
+
+        public void setDesignation(String designation) {
+            this.designation = designation;
+        }
+
+        public double getSalary() {
+            return salary;
+        }
+
+        public void setSalary(double salary) {
+            this.salary = salary;
+        }
+
+        public int getJoiningYear() {
+            return joiningYear;
+        }
+
+        public void setJoiningYear(int joiningYear) {
+            this.joiningYear = joiningYear;
+        }
+
+        public int getAge() {
+            return age;
+        }
+
+        public void setAge(int age) {
+            this.age = age;
+        }
     }
 
     static class Transaction {
